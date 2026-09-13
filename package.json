@@ -1,0 +1,43 @@
+{
+  "name": "ft_workshop",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/d3bvstack/ft_workshop.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/d3bvstack/ft_workshop/issues"
+  },
+  "homepage": "https://github.com/d3bvstack/ft_workshop#readme",
+  "devDependencies": {
+    "@storybook/addon-a11y": "^10.6.0",
+    "@storybook/addon-docs": "^10.6.0",
+    "@storybook/nextjs-vite": "^10.6.0",
+    "@storybook/test": "^8.6.15",
+    "@tailwindcss/vite": "^4.3.3",
+    "prettier": "^3.9.6",
+    "storybook": "^10.6.0",
+    "vite": "latest"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.8.0",
+    "@tailwindcss/postcss": "^4.3.3",
+    "autoprefixer": "^10.5.5",
+    "class-variance-authority": "^0.7.1",
+    "lucide-react": "^1.44.0",
+    "postcss": "^8.5.28",
+    "tailwind-merge": "^3.6.0",
+    "tailwindcss": "^4.3.3"
+  }
+}
