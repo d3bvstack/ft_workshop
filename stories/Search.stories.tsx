@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from 'storybook/test';
-import { Search } from '../components/Search';
+import { Search } from '../components/Search/index';
 
 interface Item {
   value: string;
@@ -42,7 +42,7 @@ Keep the component uncarved (\`P'u\`). \`Search\` is not a heavy abstraction; it
 \`<Search.Root>\` is the root provider. Everything else is a named export composed inside it:
 
 \`\`\`tsx
-import { Search } from '../components/Search';
+import { Search } from '../components/Search/index';
 
 <Search.Root items={items}>
   <Search.InputGroup>

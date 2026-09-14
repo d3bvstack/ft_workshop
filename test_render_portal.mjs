@@ -5,7 +5,7 @@ global.window = dom.window;
 
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { Search } from './components/Search.tsx';
+import { Search } from './components/Search/index.tsx';
 
 const root = React.createElement(Search.Root, { items: ['hello'], open: true },
   React.createElement(Search.InputGroup, {},
