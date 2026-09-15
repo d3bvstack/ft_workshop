@@ -24,6 +24,26 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
     },
     ref
   ) => {
+    const bookItems = [
+      {
+        id: 13238,
+        pgId: 22623,
+        title: 'Divinity',
+        mdCoverImageUrl: 'https://gutenberg.pglaf.org/cache/epub/22623/pg22623.cover.medium.jpg',
+        contributors: [{ role: 'author', author: 'Samachson, Joseph' }],
+      },
+      {
+        id: 13239,
+        pgId: 22624,
+        title: 'The Moon Pool',
+        mdCoverImageUrl: 'https://picsum.photos/seed/book2/52/83',
+        contributors: [{ role: 'author', author: 'Merritt, A.' }],
+      },
+    ];
+    const authorItems = [
+      { id: 32042, name: 'Ely, David', aliases: ['Lilienthal, David Eli'] },
+      { id: 32043, name: 'Smith, John', aliases: [] },
+    ];
     return (
       <nav
         ref={ref}
@@ -50,12 +70,7 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
           </div>
           <div className="flex w-full justify-center">
             <Search.Root
-              items={[
-                { value: 'book-1', label: 'Book Title' },
-                { value: 'book-2', label: 'Book Title' },
-                { value: 'author-1', label: 'Author Name' },
-                { value: 'author-2', label: 'Author Name' },
-              ]}
+              items={[...bookItems, ...authorItems]}
               filter={null}
               mode="list"
               className="w-full"
@@ -70,61 +85,39 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                     <Search.List>
                       <Search.Group>
                         <Search.GroupLabel>Books</Search.GroupLabel>
-                        <Search.Item value="book-1">
-                          <Search.Row>
-                            <Search.Cover
-                              size="sm"
-                              src="https://picsum.photos/seed/book1/52/83"
-                              alt="Book Title"
-                            />
-                            <div>
-                              <Search.ItemTitle>Book Title</Search.ItemTitle>
-                              <Search.ItemSubtitle>Author</Search.ItemSubtitle>
-                            </div>
-                          </Search.Row>
-                        </Search.Item>
-                        <Search.Separator />
-                        <Search.Item value="book-2">
-                          <Search.Row>
-                            <Search.Cover
-                              src="https://picsum.photos/seed/book2/52/83"
-                              alt="Book Title"
-                            />
-                            <div>
-                              <Search.ItemTitle>Book Title</Search.ItemTitle>
-                              <Search.ItemSubtitle>Author</Search.ItemSubtitle>
-                            </div>
-                          </Search.Row>
-                        </Search.Item>
+                        {bookItems.map((book: any) => (
+                          <Search.Item key={book.id.toString()} value={book.id.toString()}>
+                            <Search.Row>
+                              <Search.Cover
+                                size="sm"
+                                src={book.mdCoverImageUrl || ''}
+                                alt={book.title}
+                              />
+                              <div>
+                                <Search.ItemTitle>{book.title}</Search.ItemTitle>
+                                <Search.ItemSubtitle>{book.contributors?.find((c: any) => c.role === 'author')?.author || book.contributors?.[0]?.author || 'Unknown'}</Search.ItemSubtitle>
+                              </div>
+                            </Search.Row>
+                          </Search.Item>
+                        ))}
                       </Search.Group>
                       <Search.Separator />
                       <Search.Group>
                         <Search.GroupLabel>Authors</Search.GroupLabel>
-                        <Search.Item value="author-1">
-                          <Search.Row>
-                            <Search.Portrait
-                              src="https://picsum.photos/seed/author1/53/53"
-                              alt="Author Name"
-                            />
-                            <div>
-                              <Search.ItemTitle>Author Name</Search.ItemTitle>
-                              <Search.ItemSubtitle>1,280 followers</Search.ItemSubtitle>
-                            </div>
-                          </Search.Row>
-                        </Search.Item>
-                        <Search.Separator />
-                        <Search.Item value="author-2">
-                          <Search.Row>
-                            <Search.Portrait
-                              src="https://picsum.photos/seed/author2/53/53"
-                              alt="Author Name"
-                            />
-                            <div>
-                              <Search.ItemTitle>Author Name</Search.ItemTitle>
-                              <Search.ItemSubtitle>1,280 followers</Search.ItemSubtitle>
-                            </div>
-                          </Search.Row>
-                        </Search.Item>
+                        {authorItems.map((author: any) => (
+                          <Search.Item key={author.id.toString()} value={author.id.toString()}>
+                            <Search.Row>
+                              <Search.Portrait
+                                src="https://picsum.photos/seed/author1/53/53"
+                                alt={author.name}
+                              />
+                              <div>
+                                <Search.ItemTitle>{author.name}</Search.ItemTitle>
+                                <Search.ItemSubtitle>1,280 followers</Search.ItemSubtitle>
+                              </div>
+                            </Search.Row>
+                          </Search.Item>
+                        ))}
                       </Search.Group>
                       <Search.ActionButton>
                         See all 56 results for “searched string”
@@ -144,12 +137,7 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
           </div>
           <div className="flex-1 justify-center max-w-xl">
             <Search.Root
-              items={[
-                { value: 'book-1', label: 'Book Title' },
-                { value: 'book-2', label: 'Book Title' },
-                { value: 'author-1', label: 'Author Name' },
-                { value: 'author-2', label: 'Author Name' },
-              ]}
+              items={[...bookItems, ...authorItems]}
               filter={null}
               mode="list"
               className="w-full"
@@ -164,61 +152,39 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                     <Search.List>
                       <Search.Group>
                         <Search.GroupLabel>Books</Search.GroupLabel>
-                        <Search.Item value="book-1">
-                          <Search.Row>
-                            <Search.Cover
-                              size="sm"
-                              src="https://picsum.photos/seed/book1/52/83"
-                              alt="Book Title"
-                            />
-                            <div>
-                              <Search.ItemTitle>Book Title</Search.ItemTitle>
-                              <Search.ItemSubtitle>Author</Search.ItemSubtitle>
-                            </div>
-                          </Search.Row>
-                        </Search.Item>
-                        <Search.Separator />
-                        <Search.Item value="book-2">
-                          <Search.Row>
-                            <Search.Cover
-                              src="https://picsum.photos/seed/book2/52/83"
-                              alt="Book Title"
-                            />
-                            <div>
-                              <Search.ItemTitle>Book Title</Search.ItemTitle>
-                              <Search.ItemSubtitle>Author</Search.ItemSubtitle>
-                            </div>
-                          </Search.Row>
-                        </Search.Item>
+                        {bookItems.map((book: any) => (
+                          <Search.Item key={book.id.toString()} value={book.id.toString()}>
+                            <Search.Row>
+                              <Search.Cover
+                                size="sm"
+                                src={book.mdCoverImageUrl || ''}
+                                alt={book.title}
+                              />
+                              <div>
+                                <Search.ItemTitle>{book.title}</Search.ItemTitle>
+                                <Search.ItemSubtitle>{book.contributors?.find((c: any) => c.role === 'author')?.author || book.contributors?.[0]?.author || 'Unknown'}</Search.ItemSubtitle>
+                              </div>
+                            </Search.Row>
+                          </Search.Item>
+                        ))}
                       </Search.Group>
                       <Search.Separator />
                       <Search.Group>
                         <Search.GroupLabel>Authors</Search.GroupLabel>
-                        <Search.Item value="author-1">
-                          <Search.Row>
-                            <Search.Portrait
-                              src="https://picsum.photos/seed/author1/53/53"
-                              alt="Author Name"
-                            />
-                            <div>
-                              <Search.ItemTitle>Author Name</Search.ItemTitle>
-                              <Search.ItemSubtitle>1,280 followers</Search.ItemSubtitle>
-                            </div>
-                          </Search.Row>
-                        </Search.Item>
-                        <Search.Separator />
-                        <Search.Item value="author-2">
-                          <Search.Row>
-                            <Search.Portrait
-                              src="https://picsum.photos/seed/author2/53/53"
-                              alt="Author Name"
-                            />
-                            <div>
-                              <Search.ItemTitle>Author Name</Search.ItemTitle>
-                              <Search.ItemSubtitle>1,280 followers</Search.ItemSubtitle>
-                            </div>
-                          </Search.Row>
-                        </Search.Item>
+                        {authorItems.map((author: any) => (
+                          <Search.Item key={author.id.toString()} value={author.id.toString()}>
+                            <Search.Row>
+                              <Search.Portrait
+                                src="https://picsum.photos/seed/author1/53/53"
+                                alt={author.name}
+                              />
+                              <div>
+                                <Search.ItemTitle>{author.name}</Search.ItemTitle>
+                                <Search.ItemSubtitle>1,280 followers</Search.ItemSubtitle>
+                              </div>
+                            </Search.Row>
+                          </Search.Item>
+                        ))}
                       </Search.Group>
                       <Search.ActionButton>
                         See all 56 results for “searched string”

@@ -20,6 +20,19 @@ const meta = {
   component: Search.Root,
   args: {
     items: ITEMS,
+    searchButtonPosition: 'leading',
+    styledResults: false,
+  },
+  argTypes: {
+    items: { control: 'object' },
+    filter: { control: 'select', options: [null, 'contains'] },
+    mode: { control: 'select', options: ['list', 'both', 'inline', 'none'] },
+    limit: { control: 'number' },
+    searchButtonPosition: {
+      control: 'select',
+      options: ['leading', 'trailing'],
+    },
+    styledResults: { control: 'boolean' },
   },
   parameters: {
     docs: {
@@ -27,154 +40,36 @@ const meta = {
         component: `
 ## Search Component
 
-A minimal, composable search primitive built on \`@base-ui/react/autocomplete\`. It provides a full autocomplete experience—typing, filtering, navigation, selection, groups, and keyboard shortcuts—without imposing opinionated styling beyond the structural tokens it defines.
+Composable autocomplete built on \`@base-ui/react/autocomplete\`.
 
----
-
-### Philosophy
-
-Keep the component uncarved (\`P'u\`). \`Search\` is not a heavy abstraction; it is a thin, direct wrapper around the base-ui autocomplete primitives with consistent styling tokens. Use only the pieces you need and compose them naturally.
-
----
-
-### Component Structure
-
-\`<Search.Root>\` is the root provider. Everything else is a named export composed inside it:
-
-\`\`\`tsx
-import { Search } from '../components/Search/index';
-
-<Search.Root items={items}>
-  <Search.InputGroup>
-    <Search.Input placeholder="Search..." />
-    <Search.Clear />
-    <Search.Shortcut />
-  </Search.InputGroup>
-
-  <Search.Portal>
-    <Search.Positioner sideOffset={4}>
-      <Search.Popup>
-        <Search.List>
-          <Search.Collection>
-            {(item) => (
-              <Search.Item key={item.value} value={item.value}>
-                {item.label}
-              </Search.Item>
-            )}
-          </Search.Collection>
-        </Search.List>
-        <Search.Empty />
-      </Search.Popup>
-    </Search.Positioner>
-  </Search.Portal>
-</Search.Root>
-\`\`\`
-
----
+### Controls
+- \`items\`: data array
+- \`filter\`: \`null\` or filter function
+- \`mode\`: \`'list'\` | \`'both'\` | \`'inline'\` | \`'none'\`
+- \`limit\`: max visible results
+- \`searchButtonPosition\` (on \`InputGroup\`): \`'leading'\` | \`'trailing'\`
 
 ### Subcomponents
-
-| Subcomponent | Purpose |
+| Component | Purpose |
 |---|---|
-| \`Search.Root\` | Root autocomplete wrapper. Accepts \`items\`, \`filter\`, \`limit\`, and all base \`Autocomplete.Root\` props. |
-| \`Search.InputGroup\` | Outer container for the input area. Applies the border, background, focus ring, and holds icon/shortcut/clear elements. |
-| \`Search.Input\` | The actual \`<input>\`. Handles typing, filtering triggers, and keyboard interaction. |
-| \`Search.Shortcut\` | Displays keyboard shortcut hint (default \`⌘K\`). Hidden below \`lg\` breakpoint. |
-| \`Search.Clear\` | Button that clears the current value/input. |
-| \`Search.Trigger\` | Opens/closes the popup manually. |
-| \`Search.Value\` | Renders the selected value. |
-| \`Search.Icon\` | General icon wrapper. |
-| \`Search.Portal\` | Teleports the popup out of the DOM hierarchy. |
-| \`Search.Positioner\` | Positions the popup relative to an anchor (default is the input group). |
-| \`Search.Popup\` | The dropdown container. Applies shadow, border, and dark-mode tokens. |
-| \`Search.Arrow\` | Small dropdown arrow indicator. |
-| \`Search.List\` | Scrollable list container with max-height limits. |
-| \`Search.Item\` | Individual selectable option. Handles highlighted state styling. |
-| \`Search.Row\` | Flex row container for item content. |
-| \`Search.Group\` | Groups related items together. |
-| \`Search.GroupLabel\` | Label for a group (e.g., "Navigation"). |
-| \`Search.Separator\` | Visual divider between groups. |
-| \`Search.Empty\` | Message shown when no results exist (default: "No results found."). |
-| \`Search.Status\` | Status text (e.g., "No results"). |
-| \`Search.Collection\` | Renders collections from \`items\`. Accepts a render function. |
-| \`Search.Backdrop\` | Click-outside overlay. |
-
----
-
-### Key Props
-
-**\`Search.Root\`**
-
-- \`items\`: \`Item[]\` — Data source.
-- \`filter\`: Filter function or \`null\`. Pass \`null\` to disable internal filtering (useful for externally computed results or unfiltered lists).
-- \`limit\`: Cap the number of visible results. Works with \`filter={null}\` to show a fixed-size list.
-- \`mode\`: Controls filtering and inline autocompletion behavior (\`'list'\` | \`'both'\` | \`'inline'\` | \`'none'\`). Use \`'none'\` for unfiltered lists.
-- \`filteredItems\`: Pass externally computed results (e.g., from fuzzy/trigram search) while keeping \`items\` as the full dataset.
-
----
-
-### Usage Patterns
-
-#### Default — Filtered Search
-Pass \`items\` and let the component filter as the user types.
-
-\`\`\`tsx
-<Search.Root items={ITEMS}>
-  ...
-</Search.Root>
-\`\`\`
-
-#### Limited Unfiltered — Show Fixed Amount Without Filtering
-Use \`filter={null}\` to disable internal filtering. Use \`limit\` to cap results. Set \`mode="none"\` for unfiltered behavior.
-
-\`\`\`tsx
-<Search.Root items={allItems} filter={null} limit={5} mode="none">
-  ...
-</Search.Root>
-\`\`\`
-
-#### External Fuzzy / Trigram Search
-Keep the full dataset in \`items\`, compute results externally (e.g., with a trigram library), and pass them to \`filteredItems\`. Disable the internal filter with \`filter={null}\` so the component does not try to filter again over your pre-filtered set.
-
-\`\`\`tsx
-<Search.Root items={allItems} filteredItems={fuzzyResults} filter={null}>
-  ...
-</Search.Root>
-\`\`\`
-
-#### Grouped Results
-Wrap items in \`Search.Group\` with a \`Search.GroupLabel\`. Use \`Search.Separator\` between groups for visual separation.
-
----
-
-### Styling Notes
-
-- \`Search.InputGroup\` applies \`focus-within:ring-2 focus-within:ring-primary\` for focus states.
-- \`Search.Input\` removes its own focus outline (\`focus:ring-0\`) because the parent \`InputGroup\` handles the visual focus indicator.
-- \`Search.Item\` applies a pseudo-element highlight background (\`before:bg-primary\`) so highlighted text remains white on primary color.
-- \`Search.Popup\` uses CSS variables \`--anchor-width\` and \`--available-width\` set by \`Positioner\` for responsive width.
-- Dark mode tokens are included (e.g., \`dark:border-secondary-dark dark:bg-secondary\`).
-
----
-
-### Accessibility
-
-- \`Search.Input\` renders a native \`combobox\` role.
-- \`Search.Item\` renders native \`option\` roles inside the listbox.
-- \`Search.Shortcut\` uses \`aria-hidden="true"\` because it is purely decorative.
-- \`Search.Empty\` provides accessible feedback when filtering yields nothing.
-
----
-
-### Direct, Minimal Approach
-
-Do not over-engineer. Import only what you need. If you only need a basic dropdown, use \`Search.Root\`, \`InputGroup\`, \`Input\`, \`Portal\`, \`Positioner\`, \`Popup\`, \`List\`, \`Item\`, and \`Empty\`. Add \`Group\`, \`Separator\`, \`Clear\`, and \`Shortcut\` only when the use case demands them. This aligns with \`Wu Wei\`—let the natural structure of the component guide your composition rather than forcing extra abstraction.
-`,
+| \`Search.Root\` | Root provider |
+| \`Search.InputGroup\` | Input container with optional ghost submit button |
+| \`Search.Input\` | Combobox input |
+| \`Search.Shortcut\` | Keyboard hint |
+| \`Search.Clear\` | Clear value button |
+| \`Search.Portal\` | Teleport popup |
+| \`Search.Positioner\` | Popup anchor |
+| \`Search.Popup\` | Dropdown |
+| \`Search.List\` | Scrollable list |
+| \`Search.Item\` | Selectable option |
+| \`Search.Group\` / \`Search.GroupLabel\` | Grouped sections |
+| \`Search.Separator\` | Divider |
+| \`Search.Empty\` | No results message |
+        `,
       },
     },
   },
   tags: ['autodocs'],
-
 } satisfies Meta<typeof Search.Root>;
 
 export default meta;
@@ -225,46 +120,144 @@ This is the standard usage: pass \`items\`, type to filter, navigate with arrow 
       },
     },
   },
-  render: () => (
-    <Search.Root items={ITEMS}>
-      <Search.InputGroup>
-        <Search.Input placeholder="Search anything..." />
-        <Search.Clear>
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M18 6 6 18" />
-            <path d="m6 6 12 12" />
-          </svg>
-        </Search.Clear>
-        <Search.Shortcut />
-      </Search.InputGroup>
+  render: (args: any) => {
+    if (args.styledResults) {
+      return (
+        <Search.Root
+          items={[
+            { value: 'book-1', label: 'Book Title' },
+            { value: 'book-2', label: 'Book Title' },
+            { value: 'author-1', label: 'Author Name' },
+            { value: 'author-2', label: 'Author Name' },
+          ]}
+          filter={null}
+          mode="list"
+        >
+          <Search.InputGroup searchButtonPosition={args.searchButtonPosition}>
+            <Search.Input placeholder="Search books and authors..." />
+            <Search.Shortcut />
+          </Search.InputGroup>
+          <Search.Portal>
+            <Search.Positioner sideOffset={4}>
+              <Search.Popup>
+                <Search.List>
+                  <Search.Group>
+                    <Search.GroupLabel>Books</Search.GroupLabel>
+                    <Search.Item value="book-1">
+                      <Search.Row>
+                        <Search.Cover
+                          src="https://picsum.photos/seed/book1/52/83"
+                          alt="Book Title"
+                        />
+                        <div>
+                          <Search.ItemTitle>Book Title</Search.ItemTitle>
+                          <Search.ItemSubtitle>Author</Search.ItemSubtitle>
+                        </div>
+                      </Search.Row>
+                    </Search.Item>
+                    <Search.Separator />
+                    <Search.Item value="book-2">
+                      <Search.Row>
+                        <Search.Cover
+                          src="https://picsum.photos/seed/book2/52/83"
+                          alt="Book Title"
+                        />
+                        <div>
+                          <Search.ItemTitle>Book Title</Search.ItemTitle>
+                          <Search.ItemSubtitle>Author</Search.ItemSubtitle>
+                        </div>
+                      </Search.Row>
+                    </Search.Item>
+                  </Search.Group>
+                  <Search.Separator />
+                  <Search.Group>
+                    <Search.GroupLabel>Authors</Search.GroupLabel>
+                    <Search.Item value="author-1">
+                      <Search.Row>
+                        <Search.Portrait
+                          src="https://picsum.photos/seed/author1/53/53"
+                          alt="Author Name"
+                        />
+                        <div>
+                          <Search.ItemTitle>Author Name</Search.ItemTitle>
+                          <Search.ItemSubtitle>
+                            1,280 followers
+                          </Search.ItemSubtitle>
+                        </div>
+                      </Search.Row>
+                    </Search.Item>
+                    <Search.Separator />
+                    <Search.Item value="author-2">
+                      <Search.Row>
+                        <Search.Portrait
+                          src="https://picsum.photos/seed/author2/53/53"
+                          alt="Author Name"
+                        />
+                        <div>
+                          <Search.ItemTitle>Author Name</Search.ItemTitle>
+                          <Search.ItemSubtitle>
+                            1,280 followers
+                          </Search.ItemSubtitle>
+                        </div>
+                      </Search.Row>
+                    </Search.Item>
+                  </Search.Group>
+                  <Search.ActionButton>
+                    See all 56 results for “searched string”
+                  </Search.ActionButton>
+                </Search.List>
+              </Search.Popup>
+            </Search.Positioner>
+          </Search.Portal>
+        </Search.Root>
+      );
+    }
+    return (
+      <Search.Root
+        items={args.items}
+        filter={args.filter}
+        mode={args.mode}
+        limit={args.limit}
+      >
+        <Search.InputGroup searchButtonPosition={args.searchButtonPosition}>
+          <Search.Input placeholder="Search anything..." />
+          <Search.Clear>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
+            </svg>
+          </Search.Clear>
+          <Search.Shortcut />
+        </Search.InputGroup>
 
-      <Search.Portal>
-        <Search.Positioner sideOffset={4}>
-          <Search.Popup>
-            <Search.List>
-              <Search.Collection>
-                {(item: Item) => (
-                  <Search.Item key={item.value} value={item.value}>
-                    {item.label}
-                  </Search.Item>
-                )}
-              </Search.Collection>
-            </Search.List>
-            <Search.Empty />
-          </Search.Popup>
-        </Search.Positioner>
-      </Search.Portal>
-    </Search.Root>
-  ),
+        <Search.Portal>
+          <Search.Positioner sideOffset={4}>
+            <Search.Popup>
+              <Search.List>
+                <Search.Collection>
+                  {(item: Item) => (
+                    <Search.Item key={item.value} value={item.value}>
+                      {item.label}
+                    </Search.Item>
+                  )}
+                </Search.Collection>
+              </Search.List>
+              <Search.Empty />
+            </Search.Popup>
+          </Search.Positioner>
+        </Search.Portal>
+      </Search.Root>
+    );
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const input = canvas.getByRole('combobox');
@@ -333,9 +326,12 @@ Use this when you want to display a capped number of items without filtering. Th
   ),
 };
 
-
-
 export const StyledResults: Story = {
+  args: {
+    styledResults: false,
+    searchButtonPosition: 'trailing',
+  },
+
   parameters: {
     docs: {
       description: {
@@ -391,73 +387,221 @@ Demonstrates the styled popup approach matching the reference design: grouped se
       },
     },
   },
-  render: () => (
-    <Search.Root items={[
-      { value: 'book-1', label: 'Book Title' },
-      { value: 'book-2', label: 'Book Title' },
-      { value: 'author-1', label: 'Author Name' },
-      { value: 'author-2', label: 'Author Name' },
-    ]} filter={null} mode="list">
-      <Search.InputGroup>
-        <Search.Input placeholder="Search books and authors..." />
-        <Search.Shortcut />
-      </Search.InputGroup>
-      <Search.Portal>
-        <Search.Positioner sideOffset={4}>
-          <Search.Popup>
-            <Search.List>
-              <Search.Group>
-                <Search.GroupLabel>Books</Search.GroupLabel>
-                <Search.Item value="book-1">
-                  <Search.Row>
-                    <Search.Cover src="https://picsum.photos/seed/book1/52/83" alt="Book Title" />
-                    <div>
-                      <Search.ItemTitle>Book Title</Search.ItemTitle>
-                      <Search.ItemSubtitle>Author</Search.ItemSubtitle>
-                    </div>
-                  </Search.Row>
-                </Search.Item>
+
+  render: (args: any) => {
+    const bookItems = [
+      {
+        id: 13238,
+        pgId: 22623,
+        title: 'Divinity',
+        alternativeTitles: [],
+        description: 'A science fiction novel.',
+        langCode: 'en',
+        domainId: 11,
+        issuedDate: '2007-09-16',
+        viewCount: 0,
+        downloadCount: 0,
+        pgDownloadCount: 216,
+        smCoverImageUrl: null,
+        mdCoverImageUrl:
+          'https://gutenberg.pglaf.org/cache/epub/22623/pg22623.cover.medium.jpg',
+        lgCoverImageUrl: null,
+        licenseStatement: 'Public domain in the USA.',
+        createdAt: '2026-09-11T18:11:12.673Z',
+        updatedAt: null,
+        contributors: [
+          { role: 'illustrator', author: 'Freas, Kelly' },
+          { role: 'author', author: 'Samachson, Joseph' },
+        ],
+        genre: ['Fiction & Novels', 'Science Fiction & Fantasy'],
+        domain: 'Language & Literature',
+      },
+      {
+        id: 13239,
+        pgId: 22624,
+        title: 'The Moon Pool',
+        mdCoverImageUrl: 'https://picsum.photos/seed/book2/52/83',
+        contributors: [{ role: 'author', author: 'Merritt, A.' }],
+        genre: ['Fiction'],
+        domain: 'Language & Literature',
+      },
+      {
+        id: 13240,
+        pgId: 22625,
+        title: 'The Time Machine',
+        mdCoverImageUrl: 'https://picsum.photos/seed/book3/52/83',
+        contributors: [{ role: 'author', author: 'Wells, H. G.' }],
+        genre: ['Fiction'],
+        domain: 'Language & Literature',
+      },
+      {
+        id: 13241,
+        pgId: 22626,
+        title: 'War of the Worlds',
+        mdCoverImageUrl: 'https://picsum.photos/seed/book4/52/83',
+        contributors: [{ role: 'author', author: 'Wells, H. G.' }],
+        genre: ['Fiction'],
+        domain: 'Language & Literature',
+      },
+      {
+        id: 13242,
+        pgId: 22627,
+        title: 'The Invisible Man',
+        mdCoverImageUrl: 'https://picsum.photos/seed/book5/52/83',
+        contributors: [{ role: 'author', author: 'Wells, H. G.' }],
+        genre: ['Fiction'],
+        domain: 'Language & Literature',
+      },
+    ];
+    const authorItems = [
+      {
+        id: 32042,
+        name: 'Ely, David',
+        aliases: ['Lilienthal, David Eli'],
+        bio: null,
+        externalUrls: [],
+        userId: null,
+        pgId: 56529,
+        birthDate: 1927,
+        deathDate: null,
+        createdAt: '2026-09-11T18:13:20.253Z',
+        updatedAt: null,
+      },
+      {
+        id: 32043,
+        name: 'Smith, John',
+        aliases: [],
+        bio: null,
+        externalUrls: [],
+        userId: null,
+        pgId: 56530,
+        birthDate: 1950,
+        deathDate: null,
+        createdAt: '2026-09-11T18:13:20.253Z',
+        updatedAt: null,
+      },
+      {
+        id: 32044,
+        name: 'Doe, Jane',
+        aliases: [],
+        bio: null,
+        externalUrls: [],
+        userId: null,
+        pgId: 56531,
+        birthDate: 1965,
+        deathDate: null,
+        createdAt: '2026-09-11T18:13:20.253Z',
+        updatedAt: null,
+      },
+      {
+        id: 32045,
+        name: 'Brown, Alice',
+        aliases: [],
+        bio: null,
+        externalUrls: [],
+        userId: null,
+        pgId: 56532,
+        birthDate: 1970,
+        deathDate: null,
+        createdAt: '2026-09-11T18:13:20.253Z',
+        updatedAt: null,
+      },
+      {
+        id: 32046,
+        name: 'Wilson, Bob',
+        aliases: [],
+        bio: null,
+        externalUrls: [],
+        userId: null,
+        pgId: 56533,
+        birthDate: 1980,
+        deathDate: null,
+        createdAt: '2026-09-11T18:13:20.253Z',
+        updatedAt: null,
+      },
+      {
+        id: 32047,
+        name: 'Taylor, Carol',
+        aliases: [],
+        bio: null,
+        externalUrls: [],
+        userId: null,
+        pgId: 56534,
+        birthDate: 1990,
+        deathDate: null,
+        createdAt: '2026-09-11T18:13:20.253Z',
+        updatedAt: null,
+      },
+    ];
+    return (
+      <Search.Root items={bookItems} filter={null} mode="list">
+        <Search.InputGroup searchButtonPosition={args.searchButtonPosition}>
+          <Search.Input placeholder="Search books and authors..." />
+          <Search.Shortcut />
+        </Search.InputGroup>
+        <Search.Portal>
+          <Search.Positioner sideOffset={4}>
+            <Search.Popup>
+              <Search.List>
+                <Search.Group>
+                  <Search.GroupLabel>Books</Search.GroupLabel>
+                  {bookItems.map((book: any) => (
+                    <Search.Item
+                      key={book.id.toString()}
+                      value={book.id.toString()}
+                    >
+                      <Search.Row>
+                        <Search.Cover
+                          src={book.mdCoverImageUrl || ''}
+                          alt={book.title}
+                        />
+                        <div>
+                          <Search.ItemTitle>{book.title}</Search.ItemTitle>
+                          <Search.ItemSubtitle>
+                            {book.contributors?.find(
+                              (c: any) => c.role === 'author'
+                            )?.author ||
+                              book.contributors?.[0]?.author ||
+                              'Unknown'}
+                          </Search.ItemSubtitle>
+                        </div>
+                      </Search.Row>
+                    </Search.Item>
+                  ))}
+                </Search.Group>
                 <Search.Separator />
-                <Search.Item value="book-2">
-                  <Search.Row>
-                    <Search.Cover src="https://picsum.photos/seed/book2/52/83" alt="Book Title" />
-                    <div>
-                      <Search.ItemTitle>Book Title</Search.ItemTitle>
-                      <Search.ItemSubtitle>Author</Search.ItemSubtitle>
-                    </div>
-                  </Search.Row>
-                </Search.Item>
-              </Search.Group>
-              <Search.Separator />
-              <Search.Group>
-                <Search.GroupLabel>Authors</Search.GroupLabel>
-                <Search.Item value="author-1">
-                  <Search.Row>
-                    <Search.Portrait src="https://picsum.photos/seed/author1/53/53" alt="Author Name" />
-                    <div>
-                      <Search.ItemTitle>Author Name</Search.ItemTitle>
-                      <Search.ItemSubtitle>1,280 followers</Search.ItemSubtitle>
-                    </div>
-                  </Search.Row>
-                </Search.Item>
-                <Search.Separator />
-                <Search.Item value="author-2">
-                  <Search.Row>
-                    <Search.Portrait src="https://picsum.photos/seed/author2/53/53" alt="Author Name" />
-                    <div>
-                      <Search.ItemTitle>Author Name</Search.ItemTitle>
-                      <Search.ItemSubtitle>1,280 followers</Search.ItemSubtitle>
-                    </div>
-                  </Search.Row>
-                </Search.Item>
-              </Search.Group>
-              <Search.ActionButton>See all 56 results for “searched string”</Search.ActionButton>
-            </Search.List>
-          </Search.Popup>
-        </Search.Positioner>
-      </Search.Portal>
-    </Search.Root>
-  ),
+                <Search.Group>
+                  <Search.GroupLabel>Authors</Search.GroupLabel>
+                  {authorItems.map((author: any) => (
+                    <Search.Item
+                      key={author.id.toString()}
+                      value={author.id.toString()}
+                    >
+                      <Search.Row>
+                        <Search.Portrait
+                          src="https://picsum.photos/seed/author1/53/53"
+                          alt={author.name}
+                        />
+                        <div>
+                          <Search.ItemTitle>{author.name}</Search.ItemTitle>
+                          <Search.ItemSubtitle>
+                            1,280 followers
+                          </Search.ItemSubtitle>
+                        </div>
+                      </Search.Row>
+                    </Search.Item>
+                  ))}
+                </Search.Group>
+                <Search.ActionButton>
+                  See all 56 results for “searched string”
+                </Search.ActionButton>
+              </Search.List>
+            </Search.Popup>
+          </Search.Positioner>
+        </Search.Portal>
+      </Search.Root>
+    );
+  },
 };
 
 export const Grouped: Story = {
@@ -512,15 +656,79 @@ Use \`Search.Group\` and \`Search.GroupLabel\` to categorize results. \`Search.S
             <Search.List>
               <Search.Group>
                 <Search.GroupLabel>Navigation</Search.GroupLabel>
-                <Search.Item value="Analytics Dashboard">Analytics Dashboard</Search.Item>
-                <Search.Item value="Account Settings">Account Settings</Search.Item>
+                <Search.Item value="Analytics Dashboard">
+                  Analytics Dashboard
+                </Search.Item>
+                <Search.Item value="Account Settings">
+                  Account Settings
+                </Search.Item>
               </Search.Group>
               <Search.Separator />
               <Search.Group>
                 <Search.GroupLabel>Management</Search.GroupLabel>
-                <Search.Item value="Billing & Invoicing">Billing & Invoicing</Search.Item>
+                <Search.Item value="Billing & Invoicing">
+                  Billing & Invoicing
+                </Search.Item>
                 <Search.Item value="Team Members">Team Members</Search.Item>
               </Search.Group>
+            </Search.List>
+            <Search.Empty />
+          </Search.Popup>
+        </Search.Positioner>
+      </Search.Portal>
+    </Search.Root>
+  ),
+};
+
+export const ButtonPosition: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: `
+### Button Position — Leading vs Trailing Submit
+
+The \`Search.InputGroup\` supports a ghost submit button that can be placed at the leading or trailing edge via \`searchButtonPosition\`.
+
+**Controls:**
+- \`searchButtonPosition\`: \`'leading'\` (default) or \`'trailing'\`.
+
+**Usage:**
+\`\`\`tsx
+<Search.InputGroup searchButtonPosition="trailing">
+  <Search.Input placeholder="Search..." />
+  <Search.Shortcut />
+</Search.InputGroup>
+\`\`\`
+        `,
+      },
+    },
+  },
+  args: {
+    searchButtonPosition: 'leading',
+  },
+  argTypes: {
+    searchButtonPosition: {
+      control: 'select',
+      options: ['leading', 'trailing'],
+    },
+  },
+  render: (args: any) => (
+    <Search.Root items={ITEMS}>
+      <Search.InputGroup searchButtonPosition={args.searchButtonPosition}>
+        <Search.Input placeholder="Search anything..." />
+        <Search.Shortcut />
+      </Search.InputGroup>
+      <Search.Portal>
+        <Search.Positioner sideOffset={4}>
+          <Search.Popup>
+            <Search.List>
+              <Search.Collection>
+                {(item: Item) => (
+                  <Search.Item key={item.value} value={item.value}>
+                    {item.label}
+                  </Search.Item>
+                )}
+              </Search.Collection>
             </Search.List>
             <Search.Empty />
           </Search.Popup>
