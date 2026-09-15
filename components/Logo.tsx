@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
+import { BookOpen } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 export const logoVariants = cva('inline-flex items-center gap-2 text-primary font-medium', {
@@ -24,18 +25,7 @@ export interface LogoProps
 
 export const Logo = React.forwardRef<HTMLDivElement, LogoProps>(
   ({ variant = 'both', label = 'ftLogo', className, ...props }, ref) => {
-    const icon = (
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-label="Logo icon"
-      >
-        <rect width="24" height="24" rx="8" fill="currentColor" />
-      </svg>
-    );
+    const icon = <BookOpen className="size-6" aria-label="Logo icon" />;
 
     const type = (
       <span className="typeset font-medium text-primary leading-none">
