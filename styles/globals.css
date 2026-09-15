@@ -3,6 +3,9 @@
 @import "tailwindcss";
 
 @theme inline {
+  --breakpoint-mobile: 480px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
   --font-sans: "Inter", system-ui, sans-serif;
   --font-heading: "EB Garamond", Georgia, serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;

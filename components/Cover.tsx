@@ -5,9 +5,10 @@ import { cn } from '../lib/utils';
 export const coverVariants = cva('rounded-[4px] object-cover flex-shrink-0', {
   variants: {
     size: {
-      sm: 'w-[36px] h-[58px]',
-      md: 'w-[52px] h-[83px]',
-      lg: 'w-[72px] h-[115px]',
+      xs: 'w-[32px] h-[51px]',
+      sm: 'w-[52px] h-[83px]',
+      md: 'w-[168px] h-[269px]',
+      lg: 'w-[260px] h-[416px]',
     },
   },
   defaultVariants: {

@@ -23,7 +23,7 @@ export interface LogoProps
 }
 
 export const Logo = React.forwardRef<HTMLDivElement, LogoProps>(
-  ({ variant, label = 'ftLogo', className, ...props }, ref) => {
+  ({ variant = 'both', label = 'ftLogo', className, ...props }, ref) => {
     const icon = (
       <svg
         width="24"

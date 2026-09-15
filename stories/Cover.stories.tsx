@@ -8,7 +8,7 @@ const meta = {
   argTypes: {
     size: {
       control: 'select',
-      options: ['sm', 'md', 'lg'],
+      options: ['xs','sm', 'md', 'lg'],
     },
   },
   args: {
@@ -20,6 +20,10 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+export const ExtraSmall: Story = {
+  args: { size: 'xs' },
+};
 
 export const Small: Story = {
   args: { size: 'sm' },

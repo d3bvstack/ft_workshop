@@ -5,7 +5,7 @@ import { cn } from '../lib/utils';
 
 export const buttonVariants = cva(
   [
-    'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium select-none typeset',
+    'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-sm font-medium select-none typeset',
     // Smooth transitions for colors and transforms
     'transition-[color,background-color,border-color,opacity,box-shadow,transform] duration-150 active:translate-y-px',
     // Focus ring styling
