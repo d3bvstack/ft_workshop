@@ -2,7 +2,7 @@ import * as React from 'react';
 import { cn } from '../lib/utils';
 import { Logo } from './Logo';
 import { Search } from './Search';
-import { UserRound, Menu, Search as SearchIcon } from 'lucide-react';
+import { UserRound, Menu, Search as SearchIcon, ChevronUp } from 'lucide-react';
 import { Button } from './Button';
 
 export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
@@ -24,6 +24,7 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
     },
     ref
   ) => {
+    const [showSearch, setShowSearch] = React.useState(false);
     const bookItems = [
       {
         id: 13238,
@@ -54,21 +55,22 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
         {...props}
       >
         {/* Mobile layout: vertical */}
-        <div className="mobile:hidden flex flex-col w-full gap-4">
+        <div className={cn("mobile:hidden flex flex-col w-full", showSearch ? "gap-4" : "gap-0")}>
           <div className="flex w-full items-center justify-between">
             <div className="flex-shrink-0 flex items-center">
               <Logo label={logoLabel} variant="iconOnly" />
             </div>
             <div className="flex-shrink-0 flex items-center gap-2">
-              <Button variant="secondary" size="icon-md" aria-label="Search">
-                <SearchIcon />
+              <Button variant="secondary" size="icon-md" aria-label="Search" onClick={() => setShowSearch((s) => !s)}>
+                {showSearch ? <ChevronUp /> : <SearchIcon />}
               </Button>
               <Button onClick={onButtonClick} size="icon-md" aria-label={buttonLabel}>
                 <UserRound />
               </Button>
             </div>
           </div>
-          <div className="flex w-full justify-center">
+          <div className={cn("grid w-full overflow-hidden transition-[grid-template-rows] duration-300 ease-in-out", showSearch ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0")}>
+            <div className="min-h-0 w-full">
             <Search.Root
               items={[...bookItems, ...authorItems]}
               filter={null}
@@ -127,6 +129,7 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                 </Search.Positioner>
               </Search.Portal>
             </Search.Root>
+            </div>
           </div>
         </div>
 
